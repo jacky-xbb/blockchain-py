@@ -2,7 +2,6 @@ import hashlib
 import sys
 
 import utils
-from block import Block
 
 
 class Pow(object):
@@ -13,7 +12,7 @@ class Pow(object):
         self._block = block
         self._target = 1 << (256 - Pow.target_bits)
 
-    def _prepare_data(self, nonce): j
+    def _prepare_data(self, nonce):
         data_lst = [self._block.prev_block_hash,
                     self._block.data,
                     self._block.timestamp,
@@ -31,19 +30,16 @@ class Pow(object):
     def run(self):
         nonce = 0
 
-        print("Mining the block containing {0}".format(self._block.data))
+        print("Mining the block containing: {0}".format(self._block.data))
         while nonce < self.max_nonce:
             data = self._prepare_data(nonce)
-
             hash = utils.sum256(data)
-            print("\n{0}".format(hash))
+            print("{0}".format(hash))
             hash_int = int(hash, 16)
 
             if hash_int == self._target:
-                nonce += 1
-            else:
                 break
+            else:
+                nonce += 1
 
-            print("\n\n")
-
-            return nonce, hash
+        return nonce, hash

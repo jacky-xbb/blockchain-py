@@ -2,6 +2,7 @@ import time
 import hashlib
 
 import utils
+from pow import Pow
 
 
 class Block(object):
@@ -10,13 +11,14 @@ class Block(object):
         self._timestamp = utils.encode(str(int(time.time())))
         self._data = utils.encode(data)
         self._prev_block_hash = utils.encode(prev_block_hash)
-        self._hash = self._set_hash()
+        self._hash = None
+        self._nonce = None
 
-    def _set_hash(self):
-        # SetHash calculates and sets block hash
-        hash = utils.sum256(self._timestamp, self._data,
-                              self._prev_block_hash)
-        return utils.encode(hash)
+    def pow_of_block(self):
+        pow = Pow(self)
+        nonce, hash = pow.run()
+        self._nonce, self._hash = nonce, utils.encode(hash)
+        return self
 
     @property
     def hash(self):
@@ -33,3 +35,7 @@ class Block(object):
     @property
     def timestamp(self):
         return str(self._timestamp)
+
+    @property
+    def nonce(self):
+        return str(self._nonce)
