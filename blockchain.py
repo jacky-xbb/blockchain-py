@@ -2,6 +2,11 @@ from block import Block
 
 
 class Blockchain(object):
+    """ Blockchain keeps a sequence of Blocks
+
+    Attributes:
+        _blocks (Block object): a genesis Blcok.
+    """
     def __init__(self):
         self._blocks = [Block()]
 

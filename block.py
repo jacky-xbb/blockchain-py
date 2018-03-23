@@ -5,6 +5,18 @@ import utils
 
 
 class Block(object):
+    """ Represents a new Block object.
+
+    Args:
+        data (string): Data to be sent.
+        prev_block_hash (string): Hash of the previous Block. 
+
+    Attributes:
+        _timestamp (bytes): Creation timestamp of Block.
+        _data (bytes): Data to be sent.
+        _prev_block_hash (bytes): Hash of the previous Block.
+        _hash (bytes): Hash of the current Block.
+    """
 
     def __init__(self, data='Genesis Block', prev_block_hash=''):
         self._timestamp = utils.encode(str(int(time.time())))
