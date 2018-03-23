@@ -45,7 +45,6 @@ class Pow(object):
         while nonce < self.max_nonce:
             data = self._prepare_data(nonce)
             hash_hex = utils.sum256(data)
-            print(type(hash_hex))
             sys.stdout.write("%s \r" % (hash_hex))
             hash_int = int(hash_hex, 16)
 
