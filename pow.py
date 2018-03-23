@@ -5,6 +5,15 @@ import utils
 
 
 class Pow(object):
+    """ Performs a proof-of-work.
+
+    Args:
+        block (Block object): a Block object.
+
+    Attributes:
+        _block (Block object): a Block object.
+        _target (int): a integer target need to less than it.
+    """
     max_nonce = sys.maxsize
     target_bits = 24
 
@@ -21,25 +30,28 @@ class Pow(object):
         return utils.encode(''.join(data_lst))
 
     def validate(self):
+        # Validates a block's PoW
         data = self._prepare_data(self._block.nonce)
-        hash = utils.sum256(data)
-        hash_int = int(hash, 16)
+        hash_hex = utils.sum256(data)
+        hash_int = int(hash_hex, 16)
 
-        return True if hash_int == self._target else False
+        return True if hash_int < self._target else False
 
     def run(self):
+        # Performs a proof-of-work
         nonce = 0
 
         print("Mining the block containing: {0}".format(self._block.data))
         while nonce < self.max_nonce:
             data = self._prepare_data(nonce)
-            hash = utils.sum256(data)
-            sys.stdout.write("%s \r" % (hash))
-            hash_int = int(hash, 16)
+            hash_hex = utils.sum256(data)
+            print(type(hash_hex))
+            sys.stdout.write("%s \r" % (hash_hex))
+            hash_int = int(hash_hex, 16)
 
-            if hash_int == self._target:
+            if hash_int < self._target:
                 break
             else:
                 nonce += 1
 
-        return nonce, hash
+        return nonce, hash_hex
