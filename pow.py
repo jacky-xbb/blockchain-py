@@ -23,7 +23,7 @@ class Pow(object):
 
     def _prepare_data(self, nonce):
         data_lst = [self._block.prev_block_hash,
-                    self._block.data,
+                    self._block.hash_transactions(),
                     self._block.timestamp,
                     str(self.target_bits),
                     str(nonce)]
@@ -41,7 +41,7 @@ class Pow(object):
         # Performs a proof-of-work
         nonce = 0
 
-        print("Mining the block containing: {0}".format(self._block.data))
+        print('Mining a new block')
         while nonce < self.max_nonce:
             data = self._prepare_data(nonce)
             hash_hex = utils.sum256(data)
@@ -52,5 +52,7 @@ class Pow(object):
                 break
             else:
                 nonce += 1
+
+        print('\n\n')
 
         return nonce, hash_hex

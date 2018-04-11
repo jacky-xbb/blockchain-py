@@ -1,20 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1ae299738aba0c095d06f129e3b1624abf9df55145e1bc541228b676acff7f0f"
-        },
-        "host-environment-markers": {
-            "implementation_name": "cpython",
-            "implementation_version": "3.5.2",
-            "os_name": "posix",
-            "platform_machine": "x86_64",
-            "platform_python_implementation": "CPython",
-            "platform_release": "17.4.0",
-            "platform_system": "Darwin",
-            "platform_version": "Darwin Kernel Version 17.4.0: Sun Dec 17 09:19:54 PST 2017; root:xnu-4570.41.2~1/RELEASE_X86_64",
-            "python_full_version": "3.5.2",
-            "python_version": "3.5",
-            "sys_platform": "darwin"
+            "sha256": "dd5ab59bbc48aece2dbb5c3e02b3c746d356ec4003c2d5ee1da17af951fcfd01"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -27,11 +14,25 @@
         ]
     },
     "default": {
+        "logbook": {
+            "hashes": [
+                "sha256:2adcb5dce512a4f5a1597a86fbcf9aa2903bcd559c0b73061d35c40349f53ed8",
+                "sha256:55c5f3b4f8d1b65728eba8cb3b525fbac75096d03e2976c1fd12e96cd150e116",
+                "sha256:744bde9793d4b42cef8b006cf5ab1c052f1cf51b7e782709132eae405ef6d8ef",
+                "sha256:773c6e2977507313f94049b52e624dd5add790b31d0418b73777caea25c41a95",
+                "sha256:b41bcfe892d5aa66b2b4736f7f0b154fd7561ba439d45a16845e3d6acbd18497",
+                "sha256:b91c4305e6127b4879ac6a09e0677dbbd3b2f2ed44737c70ae938cfb3f3bc70c",
+                "sha256:f44562b4ecf529046db0e0a80ee145217c865966834e85479352d986a455488b"
+            ],
+            "index": "pypi",
+            "version": "==1.3.0"
+        },
         "redis": {
             "hashes": [
-                "sha256:a22ca993cea2962dbb588f9f30d0015ac4afcc45bee27d3978c0dbe9e97c6c0f",
-                "sha256:8a1900a9f2a0a44ecf6e8b5eb3e967a9909dfed219ad66df094f27f7d6f330fb"
+                "sha256:8a1900a9f2a0a44ecf6e8b5eb3e967a9909dfed219ad66df094f27f7d6f330fb",
+                "sha256:a22ca993cea2962dbb588f9f30d0015ac4afcc45bee27d3978c0dbe9e97c6c0f"
             ],
+            "index": "pypi",
             "version": "==2.10.6"
         }
     },
