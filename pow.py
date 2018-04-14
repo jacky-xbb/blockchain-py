@@ -15,7 +15,8 @@ class Pow(object):
         _target (int): a integer target need to less than it.
     """
     max_nonce = sys.maxsize
-    target_bits = 24
+    # target_bits = 24
+    target_bits = 10
 
     def __init__(self, block):
         self._block = block
@@ -46,6 +47,7 @@ class Pow(object):
             data = self._prepare_data(nonce)
             hash_hex = utils.sum256(data)
             sys.stdout.write("%s \r" % (hash_hex))
+            sys.stdout.flush()
             hash_int = int(hash_hex, 16)
 
             if hash_int < self._target:

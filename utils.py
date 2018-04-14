@@ -3,12 +3,16 @@ import hashlib
 import redis
 
 
-def encode(string, code='utf-8'):
-    return string.encode(code)
+def encode(str, code='utf-8'):
+    if not str:
+        return b''
+    return str.encode(code)
 
 
-def decode(string, code='utf-8'):
-    return string.decode(code)
+def decode(bytes, code='utf-8'):
+    if not bytes:
+        return u''
+    return bytes.decode(code)
 
 
 def sum256(*args):
@@ -27,4 +31,5 @@ class DB(object):
         self.db.hset(self.bucket, key, val)
 
     def get(self, key):
+        # return bytes
         return self.db.hget(self.bucket, key)

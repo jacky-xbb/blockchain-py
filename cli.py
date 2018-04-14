@@ -6,10 +6,16 @@ from pow import Pow
 
 def new_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--print", help="print all the blocks of the blockchain", action="store_true")
-    parser.add_argument("--add", type=str,
-                        help="add a block to the blockchain")
+    sub_parser = parser.add_subparsers(help='commands')
+    # A print command
+    print_parser = sub_parser.add_parser(
+        'print', help='Print all the blocks of the blockchain')
+    print_parser.add_argument('--print', dest='print', action='store_true')
+    # A add command
+    add_parser = sub_parser.add_parser(
+        'addblock', help='Print all the blocks of the blockchain')
+    add_parser.add_argument(
+        '--data', type=str, dest='add_data', help='block data')
 
     return parser
 
@@ -33,8 +39,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     bc = Blockchain()
 
-    if args.print:
+    if hasattr(args, 'print'):
         print_chain(bc)
 
-    if args.add:
-        add_block(bc, args.add)
+    if hasattr(args, 'add_data'):
+        add_block(bc, args.add_data)
