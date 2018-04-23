@@ -28,7 +28,8 @@ class Blockchain(object):
             if not address:
                 self._tip = None
             else:
-                cb_tx = CoinbaseTx(address, Blockchain.genesis_coinbase_data).set_id()
+                cb_tx = CoinbaseTx(
+                    address, Blockchain.genesis_coinbase_data).set_id()
                 genesis = Block([cb_tx]).pow_of_block()
                 self._block_put(genesis)
 
@@ -41,7 +42,7 @@ class Blockchain(object):
     def MineBlock(self, transaction_lst):
         # Mines a new block with the provided transactions
         last_hash = self._db.get('l')
-        new_block = Block(transaction_lst, last_hash)
+        new_block = Block(transaction_lst, last_hash).pow_of_block()
         self._block_put(new_block)
 
     def find_utxo(self, address=None):
@@ -60,14 +61,22 @@ class Blockchain(object):
         # Returns a list of transactions containing unspent outputs
         spent_txo = defaultdict(list)
         unspent_txs = []
+        # import pdb
+        # pdb.set_trace()
         for block in self.blocks:
             for tx in block.transactions:
-                tx_id = tx.ID
 
+                if not isinstance(tx, CoinbaseTx):
+                    for vin in tx.vin:
+                        if vin.can_unlock_output_with(address):
+                            tx_id = vin.tx_id
+                            spent_txo[tx_id].append(vin.vout)
+
+                tx_id = tx.ID
                 try:
                     for out_idx, out in enumerate(tx.vout):
                         # Was the output spent?
-                        if not spent_txo[tx_id]:
+                        if spent_txo[tx_id]:
                             for spent_out in spent_txo[tx_id]:
                                 if spent_out == out_idx:
                                     raise ContinueIt
@@ -76,12 +85,6 @@ class Blockchain(object):
                             unspent_txs.append(tx)
                 except ContinueIt:
                     pass
-
-                    if not tx.is_coinbase():
-                        for vin in tx.vin:
-                            if vin.can_unlock_output_with(address):
-                                tx_id = vin.tx_id
-                                spent_txo[tx_id].append(vin.vout)
 
         return unspent_txs
 
@@ -109,11 +112,12 @@ class Blockchain(object):
 
     @property
     def blocks(self):
-        if not self._tip:
-            return []
         current_tip = self._tip
         while True:
+            if not current_tip:
+                # Encounter genesis block
+                raise StopIteration
             encoded_block = self._db.get(current_tip)
-            block = pickle.load(encoded_block)
+            block = pickle.loads(encoded_block)
             yield block
             current_tip = block.prev_block_hash

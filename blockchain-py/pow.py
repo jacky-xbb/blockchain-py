@@ -15,7 +15,8 @@ class Pow(object):
         _target (int): a integer target need to less than it.
     """
     max_nonce = sys.maxsize
-    target_bits = 24
+    # target_bits = 24
+    target_bits = 10
 
     def __init__(self, block):
         self._block = block

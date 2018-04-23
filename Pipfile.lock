@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dd5ab59bbc48aece2dbb5c3e02b3c746d356ec4003c2d5ee1da17af951fcfd01"
+            "sha256": "14ceae1803da01c63d640435cba809f60374c4b40eefda5413a8965eb68a649d"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -16,24 +16,16 @@
     "default": {
         "logbook": {
             "hashes": [
-                "sha256:2adcb5dce512a4f5a1597a86fbcf9aa2903bcd559c0b73061d35c40349f53ed8",
-                "sha256:55c5f3b4f8d1b65728eba8cb3b525fbac75096d03e2976c1fd12e96cd150e116",
-                "sha256:744bde9793d4b42cef8b006cf5ab1c052f1cf51b7e782709132eae405ef6d8ef",
-                "sha256:773c6e2977507313f94049b52e624dd5add790b31d0418b73777caea25c41a95",
-                "sha256:b41bcfe892d5aa66b2b4736f7f0b154fd7561ba439d45a16845e3d6acbd18497",
-                "sha256:b91c4305e6127b4879ac6a09e0677dbbd3b2f2ed44737c70ae938cfb3f3bc70c",
-                "sha256:f44562b4ecf529046db0e0a80ee145217c865966834e85479352d986a455488b"
+                "sha256:2f8dc0544c2953c9a81d6134dcff9d25fba5d8c6d2f39d20020f29b6982e74a7",
+                "sha256:5d9546a6ca0881167cfbe59c356ce6d9106cc14728ed79e25ea7cfa30174f8d7",
+                "sha256:619b86f98a6cd9aa0a9a6739744f97fa2809b11e79b4850c861a9d7007f4d303",
+                "sha256:affe5ac99aef0a221ff5d76352dc939b5fc370a0653e280acc2d584103ab239c",
+                "sha256:c65734ac8b7f2e915805cc5f8c67764b9b5ad905c4f1486820f98719c77c2ba0",
+                "sha256:d00abc77735dd22c85925fac9d2cbb21c2eec1839d2e58884975e14d9b351e7c",
+                "sha256:f4a22f824ac7655b3389487f91875c15b0e3d34cd69472c2c1b86fc804d1c52b"
             ],
             "index": "pypi",
-            "version": "==1.3.0"
-        },
-        "redis": {
-            "hashes": [
-                "sha256:8a1900a9f2a0a44ecf6e8b5eb3e967a9909dfed219ad66df094f27f7d6f330fb",
-                "sha256:a22ca993cea2962dbb588f9f30d0015ac4afcc45bee27d3978c0dbe9e97c6c0f"
-            ],
-            "index": "pypi",
-            "version": "==2.10.6"
+            "version": "==1.3.3"
         }
     },
     "develop": {}

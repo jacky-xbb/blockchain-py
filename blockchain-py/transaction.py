@@ -1,3 +1,4 @@
+import sys
 import pickle
 try:
     from logbook import Logger
@@ -7,6 +8,7 @@ except ImportError:
 from abc import ABCMeta, abstractclassmethod
 
 import utils
+from errors import NotEnoughFundsError
 
 
 class TXInput(object):
@@ -27,6 +29,10 @@ class TXInput(object):
         self._tx_id = utils.encode(txid)
         self._vout = vout
         self._script_sig = sig
+
+    def __repr__(self):
+        return 'TXInput(tx_id={0!r}, vout={1!r}, script_sig={2!r})'.format(
+            self._tx_id, self._vout, self._script_sig)
 
     def can_unlock_output_with(self, unlocking):
         # checks whether the address initiated the transaction
@@ -59,6 +65,10 @@ class TXOutput(object):
     def __init__(self, value, pubkey):
         self._value = value
         self.script_pubkey = pubkey
+
+    def __repr__(self):
+        return 'TXOutput(value={0!r}, script_pubkey={1!r})'.format(
+            self._value, self.script_pubkey)
 
     def canbe_unlocked_with(self, unlocking):
         # checks if the output can be unlocked with the provided data
@@ -124,14 +134,18 @@ class CoinbaseTx(Transaction):
         self._vin = [TXInput('', -1, data)]
         self._vout = [TXOutput(TXOutput.subsidy, to)]
 
+    def __repr__(self):
+        return 'CoinbaseTx(id={0!r}, vin={1!r}, vout={2!r})'.format(
+            self._id, self._vin, self._vout)
+
     def tx_type(self):
         return u'Coinbase'
 
-    def is_coinbase(self):
-        # checks whether the transaction is coinbase
-        return len(self._vin) and \
-            len(self._vin[0].tx_id) == 0 and \
-            self._vin[0].vout == -1
+    # def is_coinbase(self):
+    #     # checks whether the transaction is coinbase
+    #     return len(self._vin) == 1 and \
+    #         len(self._vin[0].tx_id) == 0 and \
+    #         self._vin[0].vout == -1
 
 
 class UTXOTx(Transaction):
@@ -155,10 +169,10 @@ class UTXOTx(Transaction):
 
         self.log = Logger('UTXOTx')
         acc, valid_outputs = bc.find_spendable_outputs(from_addr, amount)
-
         if acc < amount:
             self.log.error('Not enough funds')
-
+            sys.exit()
+        
         # Build a list of inputs
         for tx_id, outs in valid_outputs.items():
             for out in outs:
@@ -174,6 +188,10 @@ class UTXOTx(Transaction):
         self._id = None
         self._vin = inputs
         self._vout = outputs
+
+    def __repr__(self):
+        return 'UTXOTx(id={0!r}, vin={1!r}, vout={2!r})'.format(
+            self._id, self._vin, self._vout)
 
     def tx_type(self):
         return u'UTXO'
