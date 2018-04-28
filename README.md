@@ -5,7 +5,7 @@ This is a python imlementation of [blockchain_go](https://github.com/Jeiwan/bloc
 
 
 ## Usage
-### Get balance of someone
+### Get balance of someone (Default to 10 coins)
 > python cli.py getbalance --address Yummy
 
 ### Create blockchain and receive first mining reward
