@@ -5,16 +5,16 @@ This is a python imlementation of [blockchain_go](https://github.com/Jeiwan/bloc
 
 
 ## Usage
-### Get balance of someone (Default to 10 coins)
+- Get balance of someone (Default to 10 coins)
 > python cli.py getbalance --address Yummy
 
-### Create blockchain and receive first mining reward
+- Create blockchain and receive first mining reward
 > python cli.py createblockchain --address Yummy
 
-### Send coins to someone
+- Send coins to someone
 > python cli.py send --from Yummy --to Alice --amount 6
 
-### Print blockchain information
+- Print blockchain information
 > python cli.py print
 
 ***
