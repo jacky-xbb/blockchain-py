@@ -1,3 +1,4 @@
 # Blockchain DB
 *.db
+# Wallet file
 *.dat
