@@ -52,23 +52,21 @@ class Blockchain(object):
 
         for tx in unspent_txs:
             for out in tx.vout:
-                if out.canbe_unlocked_with(address):
+                if out.is_locked_with_key(address):
                     utxos.append(out)
 
         return utxos
 
-    def find_unspent_transactions(self, address):
+    def find_unspent_transactions(self, pubkey_hash):
         # Returns a list of transactions containing unspent outputs
         spent_txo = defaultdict(list)
         unspent_txs = []
-        # import pdb
-        # pdb.set_trace()
         for block in self.blocks:
             for tx in block.transactions:
 
                 if not isinstance(tx, CoinbaseTx):
                     for vin in tx.vin:
-                        if vin.can_unlock_output_with(address):
+                        if vin.uses_key(pubkey_hash):
                             tx_id = vin.tx_id
                             spent_txo[tx_id].append(vin.vout)
 
@@ -81,25 +79,25 @@ class Blockchain(object):
                                 if spent_out == out_idx:
                                     raise ContinueIt
 
-                        if out.canbe_unlocked_with(address):
+                        if out.is_locked_with_key(pubkey_hash):
                             unspent_txs.append(tx)
                 except ContinueIt:
                     pass
 
         return unspent_txs
 
-    def find_spendable_outputs(self, address, amount):
+    def find_spendable_outputs(self, pubkey_hash, amount):
         # Finds and returns unspent outputs to reference in inputs
         accumulated = 0
         unspent_outputs = defaultdict(list)
-        unspent_txs = self.find_unspent_transactions(address)
+        unspent_txs = self.find_unspent_transactions(pubkey_hash)
 
         try:
             for tx in unspent_txs:
                 tx_id = tx.ID
 
                 for out_idx, out in enumerate(tx.vout):
-                    if out.canbe_unlocked_with(address) and accumulated < amount:
+                    if out.is_locked_with_key(pubkey_hash) and accumulated < amount:
                         accumulated += out.value
                         unspent_outputs[tx_id].append(out_idx)
 
@@ -121,3 +119,20 @@ class Blockchain(object):
             block = pickle.loads(encoded_block)
             yield block
             current_tip = block.prev_block_hash
+
+    def find_transaction(self, ID):
+        # finds a transaction by its ID
+        for block in self.blocks:
+            for tx in block.transactions:
+                if tx.ID == ID:
+                    return tx
+
+        return None
+
+    def sign_transaction(self, tx, priv_key):
+        prev_txs = {}
+        for vin in tx.vin:
+            prev_tx = self.find_transaction(vin.tx_id)
+            prev_txs[prev_tx.ID] = prev_tx
+
+        tx.sign(priv_key, prev_txs)

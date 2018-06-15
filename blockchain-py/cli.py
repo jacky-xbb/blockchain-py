@@ -1,8 +1,13 @@
 import argparse
 
+import base58
+
+import utils
+from wallet import Wallet
+from wallets import Wallets
+from pow import Pow
 from blockchain import Blockchain
 from transaction import UTXOTx
-from pow import Pow
 
 
 def new_parser():
@@ -32,14 +37,21 @@ def new_parser():
     send_parser.add_argument(
         '--amount', type=int, dest='send_amount', help='AMOUNT')
 
+    # A createwallet command
+    bc_parser = sub_parser.add_parser(
+        'createwallet', help='Create a wallet')
+    bc_parser.add_argument(
+        '--wallet', type=str, dest='wallet', help='WALLET')
+
     return parser
 
 
 def get_balance(address):
     bc = Blockchain()
 
+    pubkey_hash = utils.address_to_pubkey_hash(address)
     balance = 0
-    UTXOs = bc.find_utxo(address)
+    UTXOs = bc.find_utxo(pubkey_hash)
 
     for out in UTXOs:
         balance += out.value
@@ -50,6 +62,16 @@ def get_balance(address):
 def create_blockchain(address):
     Blockchain(address)
     print('Done!')
+
+
+def create_wallet():
+    wallets = Wallets()
+    wallet = Wallet()
+    address = wallet.address
+    wallets.add_wallet(address, wallet)
+    wallets.save_to_file()
+
+    print("Your new address: {}".format(address))
 
 
 def print_chain():
@@ -74,6 +96,9 @@ if __name__ == '__main__':
     parser = new_parser()
     args = parser.parse_args()
 
+    if hasattr(args, 'wallet'):
+        create_wallet()
+
     if hasattr(args, 'print'):
         print_chain()
 
@@ -91,9 +116,5 @@ if __name__ == '__main__':
 
 # command
 """
-python cli.py createblockchain --address Ivan 
-python cli.py getbalance --address Ivan
-python cli.py send --from Ivan --to bxb --amount 6
-python cli.py getbalance --address Ivan
-python cli.py print
+python cli.py send --from LYKpRRQozyCCjMvD8fYXZbqjNb4GTX5w93 --to LYJbecz4ynDcGieqXVUMfSXXAwkCaou4oa --amount 6
 """

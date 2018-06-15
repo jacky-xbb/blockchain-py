@@ -7,3 +7,4 @@ name = "pypi"
 
 [packages]
 logbook = "*"
+"base58" = "*"
