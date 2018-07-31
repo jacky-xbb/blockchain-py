@@ -133,17 +133,4 @@ python cli.py getbalance --address 17Y288D5DnFwU6cj5M8YHnxYNnDhN6f5FK
 python cli.py createblockchain --address 17Y288D5DnFwU6cj5M8YHnxYNnDhN6f5FK 
 python cli.py send --from 1JPHXxrL5kr849MHxkkQoeQGZ2ednqoMFy --to 15zBUPbr2B4JMcQHg6oJ8DYQi4t7RN1gWb --amount 6
 python cli.py send --from 1JPHXxrL5kr849MHxkkQoeQGZ2ednqoMFy --to 1LzyZCn7QNNnKuafrdd7AtZVjnHQKzCmc8 --amount 4
-
-
-./blockchain_go createwallet
-./blockchain_go createblockchain -address 18Nfe1h4JhZnbuxaJ9QKs2pCyDyTEbQrE
-./blockchain_go send -from 18Nfe1h4JhZnbuxaJ9QKs2pCyDyTEbQrE -to 1D76kxQYSjbFRh2EC9XQgVYrNMNZ3YqxAh -amount 6
-./blockchain_go send -from 18Nfe1h4JhZnbuxaJ9QKs2pCyDyTEbQrE -to 1ArJ51q8RSnre1FXCg1osgKFsNUHpZaXRS -amount 4
-./blockchain_go getbalance  -address 18Nfe1h4JhZnbuxaJ9QKs2pCyDyTEbQrE
-./blockchain_go getbalance  -address 1D76kxQYSjbFRh2EC9XQgVYrNMNZ3YqxAh
-./blockchain_go getbalance  -address 1ArJ51q8RSnre1FXCg1osgKFsNUHpZaXRS
-
-./blockchain_go createwallet
-./blockchain_go createblockchain -address 12PYqXvsuWKaa5FS6nf1RT4GMhYRo16xNP
-./blockchain_go getbalance  -address 12PYqXvsuWKaa5FS6nf1RT4GMhYRo16xNP
 """
