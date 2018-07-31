@@ -7,7 +7,8 @@ from wallet import Wallet
 from wallets import Wallets
 from pow import Pow
 from blockchain import Blockchain
-from transaction import UTXOTx
+from transaction import UTXOTx, CoinbaseTx
+from utxo_set import UTXOSet
 
 
 def new_parser():
@@ -48,19 +49,27 @@ def new_parser():
 
 def get_balance(address):
     bc = Blockchain()
+    utxo_set = UTXOSet(bc)
+
+    utxo_set.print_utxo()
 
     pubkey_hash = utils.address_to_pubkey_hash(address)
+    utxos = utxo_set.find_utxo(pubkey_hash)
     balance = 0
-    UTXOs = bc.find_utxo(pubkey_hash)
 
-    for out in UTXOs:
+    for out in utxos:
         balance += out.value
 
     print('Balance of {0}: {1}'.format(address, balance))
 
 
 def create_blockchain(address):
-    Blockchain(address)
+    import pdb
+    pdb.set_trace()
+    bc = Blockchain(address)
+    utxo_set = UTXOSet(bc)
+    utxo_set.reindex()
+
     print('Done!')
 
 
@@ -86,9 +95,12 @@ def print_chain():
 
 def send(from_addr, to_addr, amount):
     bc = Blockchain()
+    utxo_set = UTXOSet(bc)
 
-    tx = UTXOTx(from_addr, to_addr, amount, bc).set_id()
-    bc.MineBlock([tx])
+    tx = UTXOTx(from_addr, to_addr, amount, utxo_set)
+    cb_tx = CoinbaseTx(from_addr)
+    new_block = bc.MineBlock([cb_tx, tx])
+    utxo_set.update(new_block)
     print('Success!')
 
 
@@ -116,5 +128,22 @@ if __name__ == '__main__':
 
 # command
 """
-python cli.py send --from LYKpRRQozyCCjMvD8fYXZbqjNb4GTX5w93 --to LYJbecz4ynDcGieqXVUMfSXXAwkCaou4oa --amount 6
+python cli.py createwallet
+python cli.py getbalance --address 17Y288D5DnFwU6cj5M8YHnxYNnDhN6f5FK
+python cli.py createblockchain --address 17Y288D5DnFwU6cj5M8YHnxYNnDhN6f5FK 
+python cli.py send --from 1JPHXxrL5kr849MHxkkQoeQGZ2ednqoMFy --to 15zBUPbr2B4JMcQHg6oJ8DYQi4t7RN1gWb --amount 6
+python cli.py send --from 1JPHXxrL5kr849MHxkkQoeQGZ2ednqoMFy --to 1LzyZCn7QNNnKuafrdd7AtZVjnHQKzCmc8 --amount 4
+
+
+./blockchain_go createwallet
+./blockchain_go createblockchain -address 18Nfe1h4JhZnbuxaJ9QKs2pCyDyTEbQrE
+./blockchain_go send -from 18Nfe1h4JhZnbuxaJ9QKs2pCyDyTEbQrE -to 1D76kxQYSjbFRh2EC9XQgVYrNMNZ3YqxAh -amount 6
+./blockchain_go send -from 18Nfe1h4JhZnbuxaJ9QKs2pCyDyTEbQrE -to 1ArJ51q8RSnre1FXCg1osgKFsNUHpZaXRS -amount 4
+./blockchain_go getbalance  -address 18Nfe1h4JhZnbuxaJ9QKs2pCyDyTEbQrE
+./blockchain_go getbalance  -address 1D76kxQYSjbFRh2EC9XQgVYrNMNZ3YqxAh
+./blockchain_go getbalance  -address 1ArJ51q8RSnre1FXCg1osgKFsNUHpZaXRS
+
+./blockchain_go createwallet
+./blockchain_go createblockchain -address 12PYqXvsuWKaa5FS6nf1RT4GMhYRo16xNP
+./blockchain_go getbalance  -address 12PYqXvsuWKaa5FS6nf1RT4GMhYRo16xNP
 """

@@ -33,7 +33,7 @@ class Pow(object):
     def validate(self):
         # Validates a block's PoW
         data = self._prepare_data(self._block.nonce)
-        hash_hex = utils.sum256(data)
+        hash_hex = utils.sum256_hex(data)
         hash_int = int(hash_hex, 16)
 
         return True if hash_int < self._target else False
@@ -45,7 +45,7 @@ class Pow(object):
         print('Mining a new block')
         while nonce < self.max_nonce:
             data = self._prepare_data(nonce)
-            hash_hex = utils.sum256(data)
+            hash_hex = utils.sum256_hex(data)
             sys.stdout.write("%s \r" % (hash_hex))
             hash_int = int(hash_hex, 16)
 

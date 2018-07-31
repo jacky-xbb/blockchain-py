@@ -14,15 +14,16 @@ class Wallet(object):
 
     Attributes:
         _private_key (string): a private key.
-        _private_key_wif (string): a private key of wallet import format.
         _public_key (string): a public key.
+        _hash_public_key (string): a hash of public key.
         _address (string): a wallet address.
     """
 
     def __init__(self):
         self._private_key = os.urandom(32)
+
         # wallet import format
-        self._private_key_wif = utils.privatekey_to_wif(self._private_key)
+        # self._private_key_wif = utils.privatekey_to_wif(self._private_key)
         self._public_key = utils.privatekey_to_publickey(self._private_key)
         self._hash_public_key = utils.hash_public_key(self._public_key)
         self._address = utils.get_address(self._hash_public_key)

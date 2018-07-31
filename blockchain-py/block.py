@@ -1,9 +1,11 @@
 import time
 import hashlib
+import binascii
 import pickle
 
 import utils
 from pow import Pow
+from merkle_tree import MerkleTree
 
 
 class Block(object):
@@ -61,12 +63,22 @@ class Block(object):
 
     def hash_transactions(self):
         # return a hash of the transactions in the block
-        tx_hashs = []
+        tx_byte_lst = []
 
         for tx in self._tx_lst:
-            tx_hashs.append(tx.ID)
+            tx_byte_lst.append(tx.to_bytes())
 
-        return utils.sum256(utils.encode(''.join(tx_hashs)))
+        m_tree = MerkleTree(tx_byte_lst)
+        return utils.decode(binascii.hexlify(m_tree.root_hash))
+
+    # def hash_transactions(self):
+    #     # return a hash of the transactions in the block
+    #     tx_hashs = []
+
+    #     for tx in self._tx_lst:
+    #         tx_hashs.append(tx.ID)
+
+    #     return utils.sum256_hex(utils.encode(''.join(tx_hashs)))
 
     def serialize(self):
         # serializes the block
@@ -79,4 +91,4 @@ class Block(object):
         :return: A Block object.
         :rtype: Block object.
         """
-        return pickle.load(data)
+        return pickle.loads(data)

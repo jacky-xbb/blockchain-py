@@ -6,5 +6,5 @@ name = "pypi"
 [dev-packages]
 
 [packages]
-logbook = "*"
-"base58" = "*"
+ecdsa = "*"
+

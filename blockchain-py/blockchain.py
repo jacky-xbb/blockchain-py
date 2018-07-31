@@ -1,11 +1,13 @@
+import sys
 import pickle
 from collections import defaultdict
 
 
 from block import Block
-from db import DB
+from db import Bucket
 from transaction import CoinbaseTx
 from utils import ContinueIt, BreakIt
+from errors import NotFoundTransaction
 
 
 class Blockchain(object):
@@ -13,49 +15,45 @@ class Blockchain(object):
 
     Attributes:
         _tip (bytes): Point to the latest hash of block.
-        _db (DB): DB instance
+        _bucket (dict): bucket of DB 
     """
     latest = 'l'
     db_file = 'blockchain.db'
+    block_bucket = 'blocks'
     genesis_coinbase_data = 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks'
 
     def __init__(self, address=None):
-        self._db = DB(Blockchain.db_file)
+        self._bucket = Bucket(Blockchain.db_file, Blockchain.block_bucket)
 
         try:
-            self._tip = self._db.get('l')
+            self._tip = self._bucket.get('l')
         except KeyError:
             if not address:
                 self._tip = None
             else:
                 cb_tx = CoinbaseTx(
-                    address, Blockchain.genesis_coinbase_data).set_id()
+                    address, Blockchain.genesis_coinbase_data)
                 genesis = Block([cb_tx]).pow_of_block()
                 self._block_put(genesis)
 
     def _block_put(self, block):
-        self._db.put(block.hash, block.serialize())
-        self._db.put('l', block.hash)
+        self._bucket.put(block.hash, block.serialize())
+        self._bucket.put('l', block.hash)
         self._tip = block.hash
-        self._db.commit()
+        self._bucket.commit()
 
     def MineBlock(self, transaction_lst):
         # Mines a new block with the provided transactions
-        last_hash = self._db.get('l')
+        last_hash = self._bucket.get('l')
+
+        for tx in transaction_lst:
+            if not self.verify_transaction(tx):
+                print("ERROR: Invalid transaction")
+                sys.exit()
+
         new_block = Block(transaction_lst, last_hash).pow_of_block()
         self._block_put(new_block)
-
-    def find_utxo(self, address=None):
-        # Finds and returns all unspent transaction outputs
-        utxos = []
-        unspent_txs = self.find_unspent_transactions(address)
-
-        for tx in unspent_txs:
-            for out in tx.vout:
-                if out.is_locked_with_key(address):
-                    utxos.append(out)
-
-        return utxos
+        return new_block
 
     def find_unspent_transactions(self, pubkey_hash):
         # Returns a list of transactions containing unspent outputs
@@ -86,27 +84,31 @@ class Blockchain(object):
 
         return unspent_txs
 
-    def find_spendable_outputs(self, pubkey_hash, amount):
-        # Finds and returns unspent outputs to reference in inputs
-        accumulated = 0
-        unspent_outputs = defaultdict(list)
-        unspent_txs = self.find_unspent_transactions(pubkey_hash)
+    def find_utxo(self):
+        # Finds all unspent transaction outputs
+        utxo = defaultdict(list)
+        spent_txos = defaultdict(list)
 
-        try:
-            for tx in unspent_txs:
-                tx_id = tx.ID
+        for block in self.blocks:
+            for tx in block.transactions:
 
-                for out_idx, out in enumerate(tx.vout):
-                    if out.is_locked_with_key(pubkey_hash) and accumulated < amount:
-                        accumulated += out.value
-                        unspent_outputs[tx_id].append(out_idx)
+                try:
+                    for out_idx, out in enumerate(tx.vout):
+                        # Was the output spent?
+                        if spent_txos[tx.ID]:
+                            for spent_out in spent_txos[tx.ID]:
+                                if spent_out == out_idx:
+                                    raise ContinueIt
 
-                        if accumulated >= amount:
-                            raise BreakIt
-        except BreakIt:
-            pass
+                        utxo[tx.ID].append(out)
+                except ContinueIt:
+                    pass
 
-        return accumulated, unspent_outputs
+                if not isinstance(tx, CoinbaseTx):
+                    for vin in tx.vin:
+                        spent_txos[vin.tx_id].append(vin.vout)
+
+        return utxo
 
     @property
     def blocks(self):
@@ -115,7 +117,7 @@ class Blockchain(object):
             if not current_tip:
                 # Encounter genesis block
                 raise StopIteration
-            encoded_block = self._db.get(current_tip)
+            encoded_block = self._bucket.get(current_tip)
             block = pickle.loads(encoded_block)
             yield block
             current_tip = block.prev_block_hash
@@ -127,7 +129,8 @@ class Blockchain(object):
                 if tx.ID == ID:
                     return tx
 
-        return None
+        # return None
+        raise NotFoundTransaction
 
     def sign_transaction(self, tx, priv_key):
         prev_txs = {}
@@ -136,3 +139,14 @@ class Blockchain(object):
             prev_txs[prev_tx.ID] = prev_tx
 
         tx.sign(priv_key, prev_txs)
+
+    def verify_transaction(self, tx):
+        if isinstance(tx, CoinbaseTx):
+            return True
+
+        prev_txs = {}
+        for vin in tx.vin:
+            prev_tx = self.find_transaction(vin.tx_id)
+            prev_txs[prev_tx.ID] = prev_tx
+
+        return tx.verify(prev_txs)
