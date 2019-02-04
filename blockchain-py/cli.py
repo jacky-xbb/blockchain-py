@@ -64,8 +64,6 @@ def get_balance(address):
 
 
 def create_blockchain(address):
-    import pdb
-    pdb.set_trace()
     bc = Blockchain(address)
     utxo_set = UTXOSet(bc)
     utxo_set.reindex()
@@ -129,8 +127,8 @@ if __name__ == '__main__':
 # command
 """
 python cli.py createwallet
-python cli.py getbalance --address 17Y288D5DnFwU6cj5M8YHnxYNnDhN6f5FK
-python cli.py createblockchain --address 17Y288D5DnFwU6cj5M8YHnxYNnDhN6f5FK 
-python cli.py send --from 1JPHXxrL5kr849MHxkkQoeQGZ2ednqoMFy --to 15zBUPbr2B4JMcQHg6oJ8DYQi4t7RN1gWb --amount 6
+python cli.py getbalance --address 1M2ZZAUWTzG6ocih4N2Yzr6D9B8bFj1XMy
+python cli.py createblockchain --address 1X82i8GAzpSREp1pNLb6KzM9qZq1pjfbD 
+python cli.py send --from 1X82i8GAzpSREp1pNLb6KzM9qZq1pjfbD --to 1M2ZZAUWTzG6ocih4N2Yzr6D9B8bFj1XMy --amount 6
 python cli.py send --from 1JPHXxrL5kr849MHxkkQoeQGZ2ednqoMFy --to 1LzyZCn7QNNnKuafrdd7AtZVjnHQKzCmc8 --amount 4
 """
