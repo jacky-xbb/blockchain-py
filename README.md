@@ -5,6 +5,18 @@
 
 This is a python imlementation of [blockchain_go](https://github.com/Jeiwan/blockchain_go)
 
+## Preparation
+### Install [pipenv](https://github.com/pypa/pipenv)
+
+### Install this project's dependencies
+```bash
+pipenv install
+```
+
+### Activate this project's virtualenv
+```bash
+pipenv shell
+```
 
 ## Usage
 ### Create a wallet
